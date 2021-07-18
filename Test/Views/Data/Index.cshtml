@@ -1,0 +1,49 @@
+﻿@model DataLayer.Models.Data
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="card table-bordered mt-5">
+    @Html.Action("Create")
+</div>
+<div class="table-wrapper mt-5" id="Table">
+    @Html.Action("Table")
+</div>
+
+@section Scripts {
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .mt-5{
+            margin-top: 3rem
+        }
+    </style>
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        submitForm = (e) => {
+            e.preventDefault()
+            $.ajax({
+                url: '/Data/CreateData',
+                method: 'post',
+                data: { Name: $('#Name').val(), Family: $('#Family').val(), Age: $('#Age').val() },
+                success: (res) => {
+                    $('#Table').html(res);
+                    $('#Name,#Family,#Age').val('')
+                }
+            });
+        }
+        deleteData = (id) => {
+            $('#Modal').modal('show').find('.modal-body').html('Are you sure you want to delete this row????');
+            $('#deleteBtn').attr('onclick',`confirmDeleteRow(${id})`)
+        }
+        confirmDeleteRow = (id) => {
+            $.post('/Data/Delete/' + id, (res) => {
+                $('#Table').html(res);
+                $('#Modal').modal('hide')
+            })
+        }
+    </script>
+}
